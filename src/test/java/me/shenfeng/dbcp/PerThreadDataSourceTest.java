@@ -45,14 +45,13 @@ class Tester implements Runnable {
 				}
 				rs.close();
 				ps.close();
-			} catch (SQLException e) {
-				System.out.println(e);
+			} catch (Exception e) {
+				e.printStackTrace();
+				// System.out.println(e);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e1) {
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			} finally {
 				if (con != null) {
 					try {

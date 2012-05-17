@@ -39,6 +39,18 @@ public class ThreadLocalConnection extends ThreadLocal<Connection> {
 		}
 	}
 
+	public Connection get() {
+		Connection con = super.get();
+		try {
+			if (con.isClosed()) {
+				remove();
+			}
+		} catch (SQLException e) {
+			logger.error("error when asking isClosed!", e);
+		}
+		return con;
+	}
+
 	protected Connection initialValue() {
 		try {
 			int i = id.incrementAndGet();

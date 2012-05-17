@@ -13,8 +13,4 @@
 
 ## Feature
 * Clean and compact code.
-
-
-## Limitation
-* Connection is not reconnected. This means if something goes wrong,
-  like db restarted, an app restart is needed.  It on the schedule.
+* Reconnect if closed
