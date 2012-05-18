@@ -102,6 +102,10 @@ public class DelegateConnection implements Connection {
 
 	}
 
+	public String toString() {
+		return real.toString();
+	}
+
 	public int getTransactionIsolation() throws SQLException {
 		return real.getTransactionIsolation();
 	}

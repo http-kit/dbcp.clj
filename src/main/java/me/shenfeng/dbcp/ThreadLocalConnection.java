@@ -43,7 +43,9 @@ public class ThreadLocalConnection extends ThreadLocal<Connection> {
 		Connection con = super.get();
 		try {
 			if (con.isClosed()) {
+				logger.trace("a connection is closed, try to create a new one");
 				remove();
+				return super.get(); // try to create a new one
 			}
 		} catch (SQLException e) {
 			logger.error("error when asking isClosed!", e);
@@ -54,7 +56,7 @@ public class ThreadLocalConnection extends ThreadLocal<Connection> {
 	protected Connection initialValue() {
 		try {
 			int i = id.incrementAndGet();
-			logger.info("create connection, {}", i);
+			logger.trace("create connection " + i);
 			Connection con = DriverManager.getConnection(url, username,
 					password);
 			cons.add(con);
