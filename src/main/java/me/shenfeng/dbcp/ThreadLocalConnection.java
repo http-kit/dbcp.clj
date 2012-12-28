@@ -120,7 +120,8 @@ public class ThreadLocalConnection extends ThreadLocal<Connection> {
             ResultSet rs = stat.executeQuery("show variables like 'wait_timeout'");
             if (rs.next()) {
                 int timeout = rs.getInt(2);
-                if (timeout == 3600 * 8) {
+                if (timeout == 3600 * 8) { //
+                    // server will close idle connection, default 8 hours, change to 3 days
                     stat.executeUpdate("set wait_timeout = 259200");
                 }
             }
