@@ -9,8 +9,6 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public class PerThreadDataSource implements DataSource, Closeable {
 
     static {
@@ -55,7 +53,7 @@ public class PerThreadDataSource implements DataSource, Closeable {
     }
 
     public Connection getConnection(String username, String password) throws SQLException {
-        throw new NotImplementedException();
+        throw new DBCPException("not impleted");
     }
 
     public void close() throws IOException {

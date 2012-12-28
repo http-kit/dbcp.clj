@@ -10,13 +10,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CloseTest {
+public class ThreadDieCloseConnectionTest {
 
     PerThreadDataSource dataSource;
 
     @Before
     public void setup() {
-        dataSource = new PerThreadDataSource("jdbc:mysql://localhost/test", "feng", "");
+        dataSource = new PerThreadDataSource(Constants.URL, Constants.USER, Constants.PASS);
     }
 
     @After
@@ -25,7 +25,8 @@ public class CloseTest {
     }
 
     @Test
-    public void testDiredThread() throws InterruptedException, SQLException, IOException {
+    public void testConnectionClosedAfterThreadDired() throws InterruptedException,
+            SQLException, IOException {
         List<Thread> threads = new ArrayList<Thread>();
         for (int i = 0; i < 20; i++) {
             Thread t = new Thread(new Runnable() {

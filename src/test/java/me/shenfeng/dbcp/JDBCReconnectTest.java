@@ -5,16 +5,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.mysql.jdbc.MySQLConnection;
-
-public class TestJDBCReconnect {
+public class JDBCReconnectTest {
 
     public static String mysqlSafe(String text) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
-            if (!Character.isHighSurrogate(ch)
-                    && !Character.isLowSurrogate(ch)) {
+            if (!Character.isHighSurrogate(ch) && !Character.isLowSurrogate(ch)) {
                 sb.append(ch);
             }
         }
@@ -28,13 +25,11 @@ public class TestJDBCReconnect {
         String str = "abc\uD83D\uDC4Adefg";
 
         System.out.println(mysqlSafe(str));
-        
-        Connection con = DriverManager.getConnection(
-                "jdbc:mysql://localhost/reader?characterEncoding=utf8",
-                "feng", "");
 
-        PreparedStatement ps = con
-                .prepareStatement("insert into tt (c) values (?)");
+        Connection con = DriverManager.getConnection(Constants.URL, Constants.USER,
+                Constants.PASS);
+
+        PreparedStatement ps = con.prepareStatement("insert into tt (c) values (?)");
 
         ps.setString(1, str);
         ps.executeUpdate();

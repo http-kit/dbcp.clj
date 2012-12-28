@@ -16,8 +16,8 @@ public class TimeoutTest {
 
         int count = metaData.getColumnCount();
         for (int i = 1; i <= count; i++) {
-            String latel = metaData.getColumnLabel(i);
-            System.out.printf(latel + "\t");
+            String label = metaData.getColumnLabel(i);
+//            System.out.printf(latel + "\t");
         }
         System.out.println();
 
@@ -25,23 +25,21 @@ public class TimeoutTest {
             for (int i = 1; i <= count; i++) {
 
                 Object value = rs.getObject(i);
-                System.out.printf(value + "\t");
+//                System.out.printf(value + "\t");
             }
-            System.out.println();
+//            System.out.println();
         }
     }
 
-    PerThreadDataSource dataSource = new PerThreadDataSource(
-            "jdbc:mysql://localhost/test?maintainTimeStats=false",
-            "feng", "");
+    PerThreadDataSource dataSource = new PerThreadDataSource(Constants.URL, Constants.USER,
+            Constants.PASS);
 
     @Test
     public void testTimeout() throws SQLException, InterruptedException {
         Connection con = dataSource.getConnection();
 
         Statement statment = con.createStatement();
-        ResultSet rs = statment
-                .executeQuery("show global variables like 'wait_timeout'");
+        ResultSet rs = statment.executeQuery("show global variables like 'wait_timeout'");
         printResultSet(rs);
         rs.close();
 
@@ -64,8 +62,8 @@ public class TimeoutTest {
             rs.close();
             Assert.fail("should timeout");
         } catch (SQLException ignore) {
-            
-//            ignore.printStackTrace();
+
+            // ignore.printStackTrace();
         }
 
     }

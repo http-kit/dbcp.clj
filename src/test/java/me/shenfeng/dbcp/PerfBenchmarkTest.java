@@ -17,25 +17,30 @@ public class PerfBenchmarkTest {
 
     PerThreadDataSource dataSource;
     AtomicInteger total;
+    final int threadCount = 10;
+    private String name;
+    long start;
+    CountDownLatch latch;
 
     @Before
     public void setup() {
         total = new AtomicInteger(100 * 10000); // 1000k
         dataSource = new PerThreadDataSource("jdbc:mysql://localhost/test", "feng", "");
+        start = System.currentTimeMillis();
+        latch = new CountDownLatch(threadCount);
     }
 
     @After
     public void tearDown() throws IOException {
+        long end = System.currentTimeMillis();
+        System.out.println(name + " takes time " + (end - start) + "ms");
         dataSource.close();
     }
 
     // 366 ms
     @Test
     public void testGetConnectonBench() throws InterruptedException {
-
-        long start = System.currentTimeMillis();
-
-        int threadCount = 10;
+        name = threadCount + " threads, " + total.get() + " times, getConnection => close";
         final CountDownLatch latch = new CountDownLatch(threadCount);
         for (int j = 0; j < threadCount; j++) {
             new Thread(new Runnable() {
@@ -53,20 +58,15 @@ public class PerfBenchmarkTest {
                 }
             }).start();
         }
-
         latch.await();
-
-        System.out.println("10 threads, 1000k get connection takes time "
-                + (System.currentTimeMillis() - start) + "ms");
     }
 
     // 9616ms
     @Test
     public void testStatementBench() throws InterruptedException {
-        long start = System.currentTimeMillis();
+        name = threadCount + " threads, " + total.get()
+                + " times, getConnection => Statement(select 1) => close";
 
-        int threadCount = 10;
-        final CountDownLatch latch = new CountDownLatch(threadCount);
         for (int j = 0; j < threadCount; j++) {
             new Thread(new Runnable() {
                 public void run() {
@@ -83,26 +83,19 @@ public class PerfBenchmarkTest {
                             e.printStackTrace();
                         }
                     }
-
                     latch.countDown();
                 }
             }).start();
         }
-
-        latch.await();
-
-        System.out.println("10 threads, 1000k get connection then exec statement takes time "
-                + (System.currentTimeMillis() - start) + "ms");
+        latch.await(); // wait threads finish job
     }
 
     // 10242ms
     @Test
     public void testPrepareStatementBench() throws InterruptedException {
+        name = threadCount + " threads, " + total.get()
+                + " times, getConnection => PreparedStatement(select 1) => close";
 
-        long start = System.currentTimeMillis();
-
-        int threadCount = 10;
-        final CountDownLatch latch = new CountDownLatch(threadCount);
         for (int j = 0; j < threadCount; j++) {
             new Thread(new Runnable() {
                 public void run() {
@@ -125,8 +118,5 @@ public class PerfBenchmarkTest {
         }
 
         latch.await();
-
-        System.out.println("10 threads, 1000k get connection then prepareStatment takes time "
-                + (System.currentTimeMillis() - start) + "ms");
     }
 }

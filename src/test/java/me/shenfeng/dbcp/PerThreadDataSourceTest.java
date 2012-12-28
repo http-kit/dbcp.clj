@@ -29,20 +29,20 @@ class Tester implements Runnable {
                 con = dataSource.getConnection();
 
                 Statement sta = con.createStatement();
-                ResultSet s = sta.executeQuery("select count(*) from user");
+                ResultSet s = sta.executeQuery("select count(*) from mysql.user");
                 while (s.next()) {
-//                    System.out.println(s.getInt(1));
+                    // System.out.println(s.getInt(1));
                 }
                 Thread.sleep(100);
                 s.close();
                 sta.close();
 
                 PreparedStatement ps = con
-                        .prepareStatement("select count(*) from user where user = ?");
+                        .prepareStatement("select count(*) from mysql.user where user = ?");
                 ps.setString(1, "root");
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-//                    System.out.println(rs.getInt(1));
+                    // System.out.println(rs.getInt(1));
                 }
                 rs.close();
                 ps.close();
@@ -66,16 +66,14 @@ class Tester implements Runnable {
 }
 
 public class PerThreadDataSourceTest {
-    public static final String url = "jdbc:mysql://localhost/mysql";
-    public static final String user = "feng";
-    public static final String password = "";
 
     private static final int LOOP = 10;
 
     @Test
-    public void test1() throws InterruptedException, IOException {
+    public void testPerThreadDataSource() throws InterruptedException, IOException {
 
-        PerThreadDataSource dataSource = new PerThreadDataSource(url, user, password);
+        PerThreadDataSource dataSource = new PerThreadDataSource(Constants.URL, Constants.USER,
+                Constants.PASS);
 
         Thread t1 = new Thread(new Tester(dataSource, LOOP));
         Thread t2 = new Thread(new Tester(dataSource, LOOP));
@@ -90,9 +88,9 @@ public class PerThreadDataSourceTest {
     public void testBasicDataSource() throws InterruptedException {
         BasicDataSource dataSource = new BasicDataSource();
 
-        dataSource.setUrl(url);
-        dataSource.setUsername(user);
-        dataSource.setPassword(password);
+        dataSource.setUrl(Constants.URL);
+        dataSource.setUsername(Constants.USER);
+        dataSource.setPassword(Constants.PASS);
 
         Thread t1 = new Thread(new Tester(dataSource, LOOP));
         Thread t2 = new Thread(new Tester(dataSource, LOOP));

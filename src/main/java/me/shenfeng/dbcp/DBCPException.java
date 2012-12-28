@@ -7,4 +7,8 @@ public class DBCPException extends RuntimeException {
     public DBCPException(String mesg, Throwable cause) {
         super(mesg, cause);
     }
+
+    public DBCPException(String mesg) {
+        super(mesg);
+    }
 }
