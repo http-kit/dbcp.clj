@@ -6,6 +6,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TimeoutTest {
@@ -31,7 +32,7 @@ public class TimeoutTest {
     }
 
     PerThreadDataSource dataSource = new PerThreadDataSource(
-            "jdbc:mysql://localhost/rssminer?maintainTimeStats=false",
+            "jdbc:mysql://localhost/test?maintainTimeStats=false",
             "feng", "");
 
     @Test
@@ -61,8 +62,10 @@ public class TimeoutTest {
             rs = statment.executeQuery("show variables like 'wait_timeout'");
             printResultSet(rs);
             rs.close();
+            Assert.fail("should timeout");
         } catch (SQLException ignore) {
-            ignore.printStackTrace();
+            
+//            ignore.printStackTrace();
         }
 
     }

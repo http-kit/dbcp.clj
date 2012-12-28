@@ -31,7 +31,7 @@ class Tester implements Runnable {
                 Statement sta = con.createStatement();
                 ResultSet s = sta.executeQuery("select count(*) from user");
                 while (s.next()) {
-                    System.out.println(s.getInt(1));
+//                    System.out.println(s.getInt(1));
                 }
                 Thread.sleep(100);
                 s.close();
@@ -42,7 +42,7 @@ class Tester implements Runnable {
                 ps.setString(1, "root");
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    System.out.println(rs.getInt(1));
+//                    System.out.println(rs.getInt(1));
                 }
                 rs.close();
                 ps.close();
@@ -67,7 +67,7 @@ class Tester implements Runnable {
 
 public class PerThreadDataSourceTest {
     public static final String url = "jdbc:mysql://localhost/mysql";
-    public static final String user = "root";
+    public static final String user = "feng";
     public static final String password = "";
 
     private static final int LOOP = 10;
