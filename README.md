@@ -1,14 +1,16 @@
 # Simple Database Connection pool
 
-* A `javax.sql.DataSource` written for
-  [Rssminer](http://rssminer.net). by using
-  `java.lang.ThreadLocal`. Per thread per connection.
+A jdbc connection pool. By using ThreadLocals, per connection per Thread.
+
+The connection get atomatically closed when thread died, so, there is no connection leak
+
+Very fast.  Should be faster than the common object pooling way
 
 ## Why
 
-* Rssminer needs to be fast. It use a fix number of Thread, connection
-  per thread sounds reasonable, should be faster than common way.
-* Code use memory, so write less code.
+* I write it for [Rssminer](http://rssminer.net), it needs to be fast. It use a fix number of Thread, connection
+  per thread sounds reasonable.
+* Code uses memory, so write less code.
 
 
 ## Feature
