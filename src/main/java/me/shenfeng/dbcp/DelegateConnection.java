@@ -20,7 +20,7 @@ import java.util.Properties;
 
 public class DelegateConnection implements Connection {
 
-	private final Connection real;
+	protected final Connection real;
 
 	public DelegateConnection(Connection real) {
 		this.real = real;

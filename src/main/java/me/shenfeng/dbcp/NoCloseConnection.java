@@ -5,11 +5,11 @@ import java.sql.SQLException;
 
 public class NoCloseConnection extends DelegateConnection {
 
-	public NoCloseConnection(Connection con) {
-		super(con);
-	}
+    public NoCloseConnection(Connection con) {
+        super(con);
+    }
 
-	public void close() throws SQLException {
-		// noop
-	}
+    public void close() throws SQLException {
+        // noop
+    }
 }

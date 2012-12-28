@@ -45,6 +45,10 @@ public class PerThreadDataSource implements DataSource, Closeable {
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
 		return false;
 	}
+	
+	public String toString() {
+	    return super.toString();
+	}
 
 	public Connection getConnection() throws SQLException {
 		return connection.get();
