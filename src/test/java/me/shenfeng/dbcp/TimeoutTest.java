@@ -17,7 +17,7 @@ public class TimeoutTest {
         int count = metaData.getColumnCount();
         for (int i = 1; i <= count; i++) {
             String label = metaData.getColumnLabel(i);
-//            System.out.printf(latel + "\t");
+            // System.out.printf(latel + "\t");
         }
         System.out.println();
 
@@ -25,14 +25,13 @@ public class TimeoutTest {
             for (int i = 1; i <= count; i++) {
 
                 Object value = rs.getObject(i);
-//                System.out.printf(value + "\t");
+                // System.out.printf(value + "\t");
             }
-//            System.out.println();
+            // System.out.println();
         }
     }
 
-    PerThreadDataSource dataSource = new PerThreadDataSource(Constants.URL, Constants.USER,
-            Constants.PASS);
+    PerThreadDataSource dataSource = Constants.newDS();
 
     @Test
     public void testTimeout() throws SQLException, InterruptedException {

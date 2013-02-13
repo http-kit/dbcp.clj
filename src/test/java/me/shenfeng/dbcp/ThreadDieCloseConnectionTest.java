@@ -16,7 +16,7 @@ public class ThreadDieCloseConnectionTest {
 
     @Before
     public void setup() {
-        dataSource = new PerThreadDataSource(Constants.URL, Constants.USER, Constants.PASS);
+        dataSource = Constants.newDS();
     }
 
     @After

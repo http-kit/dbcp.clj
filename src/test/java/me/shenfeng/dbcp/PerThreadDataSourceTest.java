@@ -72,8 +72,7 @@ public class PerThreadDataSourceTest {
     @Test
     public void testPerThreadDataSource() throws InterruptedException, IOException {
 
-        PerThreadDataSource dataSource = new PerThreadDataSource(Constants.URL, Constants.USER,
-                Constants.PASS);
+        PerThreadDataSource dataSource = Constants.newDS();
 
         Thread t1 = new Thread(new Tester(dataSource, LOOP));
         Thread t2 = new Thread(new Tester(dataSource, LOOP));

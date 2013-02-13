@@ -24,8 +24,8 @@ public class PerfBenchmarkTest {
 
     @Before
     public void setup() {
-        total = new AtomicInteger(100 * 10000); // 1000k
-        dataSource = new PerThreadDataSource("jdbc:mysql://localhost/test", "feng", "");
+        total = new AtomicInteger(500 * 1000);
+        dataSource = Constants.newDS();
         start = System.currentTimeMillis();
         latch = new CountDownLatch(threadCount);
     }

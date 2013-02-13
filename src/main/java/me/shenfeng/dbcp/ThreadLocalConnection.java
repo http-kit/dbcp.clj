@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadLocalConnection extends ThreadLocal<Connection> {
@@ -87,23 +86,33 @@ public class ThreadLocalConnection extends ThreadLocal<Connection> {
         }
     }
 
+    private void closeBrokenConnections() {
+        synchronized (connections) {
+            Iterator<Connection> ite = connections.values().iterator();
+            while (ite.hasNext()) {
+                Connection con = ite.next();
+                try {
+                    Statement stat = con.createStatement();
+                    stat.executeQuery("select 1").close();
+                    stat.close();
+                } catch (Exception e1) {
+                    ite.remove();
+                    try {
+                        con.close(); // broken connection, close it
+                    } catch (SQLException ignore) {
+                    }
+                }
+            }
+        }
+    }
+
     public Connection get() {
         closeDiedThreadConnection();
         Connection con = super.get();
         try {
-            if (con.isClosed()) {
-                synchronized (connections) { // remove from connections
-                    Thread c = Thread.currentThread();
-                    Iterator<Entry<WeakReference<Thread>, Connection>> it = connections
-                            .entrySet().iterator();
-                    while (it.hasNext()) {
-                        Entry<WeakReference<Thread>, Connection> e = it.next();
-                        if (e.getKey().get() == c) {
-                            it.remove();
-                        }
-                    }
-                }
-                remove(); // all recreate one
+            if (con.isClosed()) { // maybe server restarted
+                closeBrokenConnections();
+                remove(); // for recreate one
                 return super.get(); // try to create a new one
             }
         } catch (SQLException e) {
@@ -116,17 +125,19 @@ public class ThreadLocalConnection extends ThreadLocal<Connection> {
         counter.incrementAndGet();
         try {
             Connection con = DriverManager.getConnection(url, username, password);
-            Statement stat = con.createStatement();
-            ResultSet rs = stat.executeQuery("show variables like 'wait_timeout'");
-            if (rs.next()) {
-                int timeout = rs.getInt(2);
-                if (timeout == 3600 * 8) { //
-                    // server will close idle connection, default 8 hours, change to 3 days
-                    stat.executeUpdate("set wait_timeout = 259200");
+            if (con.getMetaData().getDatabaseProductName().toLowerCase().contains("mysql")) {
+                Statement stat = con.createStatement();
+                ResultSet rs = stat.executeQuery("show variables like 'wait_timeout'");
+                if (rs.next()) {
+                    int timeout = rs.getInt(2);
+                    if (timeout == 3600 * 8) { //
+                        // server close idle connection, 8 hours => 3 days
+                        stat.executeUpdate("set wait_timeout = 259200");
+                    }
                 }
+                rs.close();
+                stat.close();
             }
-            rs.close();
-            stat.close();
             synchronized (connections) {
                 connections.put(new WeakReference<Thread>(Thread.currentThread(), queue), con);
             }
