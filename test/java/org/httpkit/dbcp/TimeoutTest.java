@@ -1,4 +1,4 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -6,6 +6,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.httpkit.dbcp.PerThreadDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 

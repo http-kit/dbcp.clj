@@ -1,4 +1,4 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.httpkit.dbcp.PerThreadDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class PerfBenchmarkTest {
 
     @Before
     public void setup() {
-        total = new AtomicInteger(500 * 1000);
+        total = new AtomicInteger(200 * 1000);
         dataSource = Constants.newDS();
         start = System.currentTimeMillis();
         latch = new CountDownLatch(threadCount);

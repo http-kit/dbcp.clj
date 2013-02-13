@@ -1,4 +1,4 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
 
 import java.io.Closeable;
 import java.io.IOException;

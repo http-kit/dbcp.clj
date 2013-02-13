@@ -1,4 +1,4 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import org.httpkit.dbcp.PerThreadDataSource;
 
 class Task implements Runnable {
 

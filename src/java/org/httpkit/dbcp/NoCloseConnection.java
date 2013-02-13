@@ -1,4 +1,4 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
 
 import java.sql.Connection;
 import java.sql.SQLException;

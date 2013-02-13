@@ -2,4 +2,6 @@
 /.settings
 /.classpath
 target/
+pom.xml
 bin/
+/.lein-failures

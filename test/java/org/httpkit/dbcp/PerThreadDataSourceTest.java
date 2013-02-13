@@ -1,4 +1,4 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -10,6 +10,7 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.httpkit.dbcp.PerThreadDataSource;
 import org.junit.Test;
 
 class Tester implements Runnable {

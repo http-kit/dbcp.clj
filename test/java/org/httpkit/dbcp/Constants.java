@@ -1,4 +1,6 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
+
+import org.httpkit.dbcp.PerThreadDataSource;
 
 public class Constants {
 

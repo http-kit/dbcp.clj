@@ -1,4 +1,4 @@
-package me.shenfeng.dbcp;
+package org.httpkit.dbcp;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.httpkit.dbcp.PerThreadDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
