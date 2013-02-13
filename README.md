@@ -1,88 +1,61 @@
-# Simple Database Connection pool
+# Database Connection pool for Clojure
 
-A jdbc connection pool. By using ThreadLocals, per connection per Thread. The connection get atomatically closed when thread died.
+A jdbc connection pool written from scratch, using ThreadLocals, per Thread per connection. Works very good with http-kit server's thread pool model
 
-It's very fast, should be faster than the common object pooling way
+Current semantic version: `[http-kit/dbcp "0.1.0"]`.
 
-## Why
+## wait, Is the API blocking (sync)? blocking = slow
 
-* I write it for [Rssminer](http://rssminer.net). Rssminer needs to be fast. It use a fix number of Thread, connection
-  per thread sounds reasonable.
-* Code uses memory, so write less code.
-* Simple and reliable
-* Zero dependency
+Of course blocking! Blocking API is much much easier to use.
 
-## Java Usage
+> blocking = slow?
 
-```xml
-<!-- pom.xml -->
+If you only have one thread, that's may be the case, you can do nothing but waiting for server if blocking.
+For Clojure, not the case, Clojure has multithreading, you can accept incoming request and wait for MySQL at the same time!
 
-<repository>
-  <id>clojars.org</id>
-  <url>http://clojars.org/repo</url>
-</repository>
+> A SQL query can run more than 10s
 
-<dependency>
-    <groupId>me.shenfeng</groupId>
-    <artifactId>dbcp</artifactId>
-    <version>1.0</version>
-</dependency>
-
-```
-
-```java
-
-DataSource dataSource = new PerThreadDataSource("jdbc:mysql://localhost/test", "root", "pass");
-Connection con = dataSource.getConnection();
-Statement stat = con.createStatement();
-ResultSet rs = stat.executeQuery("select 1");
-
-```
-
-## Clojure Usage
-
-```clj
-;;; project.clj
-:dependencies [[org.clojure/clojure "1.4.0"]
-               [org.clojure/java.jdbc "0.2.3"]
-               [me.shenfeng/dbcp "1.0"]]
-(ns you-ns
-  (:import me.shenfeng.dbcp.PerThreadDataSource)
-  (:use [clojure.java.jdbc :only [with-connection do-prepared
-                                  with-query-results insert-record]]))
-(defonce mysql-factory (atom nil))
-(defn use-mysql-database! [jdbcurl user pass]
-  (let [ds (PerThreadDataSource. jdbcurl user pass)]
-    (reset! mysql-factory {:factory (fn [& args] (.getConnection ds))
-                           :ds ds})))
-(defn close-mysql-factory! []
-  (when-let [ds (:ds @mysql-factory)]
-    (.close ^PerThreadDataSource ds)
-    (reset! mysql-factory nil)))
-
-(defmacro with-mysql [& body]
-  `(with-connection @mysql-factory
-     ~@body))
-;;; example
-(with-mysql
-  (do-prepared "UPDATE users SET name = ? WHERE id = ?" [name id]))
-
-(defn mysql-query [query]
-  (with-mysql (with-query-results rs query (doall rs))))
-;;; example
-(mysql-query ["SELECT * FROM users WHERE id = ?" 1]) ; return a seq of map
-=> ({:name "name"
-     :id 1
-     :email "email@example.com"
-     ...})
-
-(defn mysql-insert [table record]
-  (:generated_key (with-mysql (insert-record table record))))
-;;; example
-(mysql-insert :my_table {:name "" :key "value"}) ; return generated id
-
-```
+It's time to double check your data and SQL statement. Non-blocking does not save you!
 
 ## Feature
-* Clean and compact code.
+* Clean and compact code: jar size is about ~11k
+* Fast, very fast.
+* The connection get atomatically closed when thread died.
 * Reconnect if closed
+
+## Usage
+
+```clj
+(:require [org.httpkit.dbcp :as db])
+
+(db/use-database! "jdbc:mysql://localhost/test" "user" "password")
+
+;; insert value
+(db/insert-record :your_table {:column1 "value1"
+                               :column2 "value2"
+                               :column3 2})
+=> {:generated_key 1} ;; mysql
+
+;; update
+(db/update-values :your_table ["column1 = ?" "value1"]
+                  {:column1 "new-value"
+                   :column3 1000})
+
+;;query
+(db/query "select * from your_table where column1 = ?" "value1")
+=> ({:id 1 :column1 "new-value" :column2 "vlaue2" :column3 1000})
+
+;; delete
+(db/delete-rows :your_table ["column1 = ?" "value1"])
+
+(db/close-database!)
+
+```
+
+### Contact
+
+Please use the [GitHub issues page](https://github.com/http-kit/dbcp.clj/issues) for feature suggestions, bug reports, or general discussions.
+
+### License
+
+Copyright &copy; 2012 [Feng Shen](http://shenfeng.me/). Distributed under the [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
